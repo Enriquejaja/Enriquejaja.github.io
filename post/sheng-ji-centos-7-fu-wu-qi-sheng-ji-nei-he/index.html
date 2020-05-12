@@ -1,0 +1,527 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>升级Centos 7服务器升级内核 | Enrique</title>
+<meta name="description" content="随手记" />
+<link rel="shortcut icon" href="https://enriquejaja.github.io/favicon.ico?v=1589298736068">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://enriquejaja.github.io/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://enriquejaja.github.io">
+  <img class="avatar" src="https://enriquejaja.github.io/images/avatar.png?v=1589298736068" alt="">
+  </a>
+  <h1 class="site-title">
+    Enrique
+  </h1>
+  <p class="site-description">
+    随手记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              升级Centos 7服务器升级内核
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-05-12
+              </span>
+              <span>
+                13 min read
+              </span>
+              
+                <a href="https://enriquejaja.github.io/tag/Jkw7sC2u9/" class="post-tag">
+                  # CentOS 7.X
+                </a>
+              
+                <a href="https://enriquejaja.github.io/tag/Tei5x4ktl0/" class="post-tag">
+                  # Linux
+                </a>
+              
+                <a href="https://enriquejaja.github.io/tag/IP2eR46IgR/" class="post-tag">
+                  # Docker
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mir-s3-cdn-cf.behance.net/project_modules/1400_opt_1/27581992043001.5e55083a28001.jpg" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>首先通过SSH远程登陆服务器，先选择一般用户的权限来登录，或者用可以使用sudo命令的用户来登录。</p>
+<p>这里使用sudo命令的用户登录。</p>
+<h2 id="一-查看系统内核版本">一、查看系统内核版本</h2>
+<h3 id="查看发行版本">查看发行版本</h3>
+<pre><code class="language-powershell">cat /etc/redhat-release
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://uploader.shimo.im/f/sLm4aMvFeJpjwSTU.png!thumbnail" alt="图片" loading="lazy"></figure>
+<pre><code class="language-powershell">[bisu@sdev075 bi]$ cat /etc/redhat-release
+CentOS Linux release 7.6.1810 (Core) 
+</code></pre>
+<h3 id="查看内核版本">查看内核版本</h3>
+<pre><code class="language-powershell">uname -r
+</code></pre>
+<pre><code class="language-powershell">[bisu@sdev075 bi]$ uname -r
+3.10.0-957.10.1.el7.x86_64
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://uploader.shimo.im/f/A59ueux5PSTwrlP3.png!thumbnail" alt="图片" loading="lazy"></figure>
+<h2 id="二-升级内核">二、升级内核</h2>
+<h3 id="导入elrepo的key">导入elrepo的key</h3>
+<p>升级内核需要先导入elrepo的key</p>
+<pre><code class="language-plain">rpm -import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+</code></pre>
+<pre><code class="language-plain">[bisu@sdev075 bi]$ rpm -import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://uploader.shimo.im/f/VHKjaJnapPyMpyTs.png!thumbnail" alt="图片" loading="lazy"></figure>
+<h3 id="安装elrepo的yum源">安装elrepo的yum源</h3>
+<p>然后安装elrepo的yum源</p>
+<pre><code class="language-powershell">rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
+</code></pre>
+<p>这时我们还不是root用户，所以会提醒我们权限不够。</p>
+<figure data-type="image" tabindex="4"><img src="https://uploader.shimo.im/f/olUza3T6m6FAMjLh.png!thumbnail" alt="图片" loading="lazy"></figure>
+<pre><code class="language-plain">[bisu@sdev075 bi]$ rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.r
+获取http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
+获取http://elrepo.org/elrepo-release-7.0-4.el7.elrepo.noarch.rpm
+错误：can't create 事务 lock on /var/lib/rpm/.rpm.lock (权限不够)
+</code></pre>
+<h4 id="切换为-root-用户">切换为 root 用户</h4>
+<p>使用 su 命令，然后输入密码，切换为 root 用户</p>
+<pre><code class="language-plain">[bisu@sdev075 bi]$ su
+密码：
+</code></pre>
+<figure data-type="image" tabindex="5"><img src="https://uploader.shimo.im/f/36qrplXuaibtj5Xw.png!thumbnail" alt="图片" loading="lazy"></figure>
+<h4 id="再次导入及安装elrepo的yum源">再次导入及安装elrepo的yum源</h4>
+<pre><code class="language-powershell">[root@sdev075 bi]# rpm -import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+[root@sdev075 bi]# rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
+</code></pre>
+<figure data-type="image" tabindex="6"><img src="https://uploader.shimo.im/f/Vlu8U1WyouQMQeuU.png!thumbnail" alt="图片" loading="lazy"></figure>
+<pre><code class="language-powershell">[root@sdev075 bi]# rpm -import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+[root@sdev075 bi]# rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
+获取http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
+获取http://elrepo.org/elrepo-release-7.0-4.el7.elrepo.noarch.rpm
+准备中...                          ################################# [100%]
+	软件包 elrepo-release-7.0-4.el7.elrepo.noarch 已经安装
+</code></pre>
+<h3 id="列出可安装的软件包">列出可安装的软件包</h3>
+<p>仓库启用后，你可以使用下面的命令列出可用的内核相关包，如下图：</p>
+<pre><code class="language-shell">yum --disablerepo=&quot;*&quot; --enablerepo=&quot;elrepo-kernel&quot; list available
+</code></pre>
+<p>这里是0428安装的，所以显示的版本为上个版本，4.4.219-1、5.6.6-1。</p>
+<figure data-type="image" tabindex="7"><img src="https://uploader.shimo.im/f/dl4Z0TLzgbQYkhCH.png!thumbnail" alt="图片" loading="lazy"></figure>
+<p>这里是0429安装的，所以显示的版本为上个版本，4.4.219-1、5.6.7-1。</p>
+<figure data-type="image" tabindex="8"><img src="https://uploader.shimo.im/f/HeS58hDfCLzjlR7a.png!thumbnail" alt="图片" loading="lazy"></figure>
+<p>这里是0428安装的，所以显示的版本为上个版本，4.4.219-1、5.6.6-1。</p>
+<pre><code class="language-plain">[root@sdev075 bi]# yum --disablerepo=&quot;*&quot; --enablerepo=&quot;elrepo-kernel&quot; list available
+已加载插件：fastestmirror, langpacks
+Loading mirror speeds from cached hostfile
+ * elrepo-kernel: mirrors.tuna.tsinghua.edu.cn
+可安装的软件包
+kernel-lt.x86_64                                     4.4.219-1.el7.elrepo                 
+kernel-lt-devel.x86_64                               4.4.219-1.el7.elrepo                 
+kernel-lt-doc.noarch                                 4.4.219-1.el7.elrepo                 
+kernel-lt-headers.x86_64                             4.4.219-1.el7.elrepo                 
+kernel-lt-tools.x86_64                               4.4.219-1.el7.elrepo                 
+kernel-lt-tools-libs.x86_64                          4.4.219-1.el7.elrepo                 
+kernel-lt-tools-libs-devel.x86_64                    4.4.219-1.el7.elrepo                 
+kernel-ml-devel.x86_64                               5.6.6-1.el7.elrepo                   
+kernel-ml-doc.noarch                                 5.6.6-1.el7.elrepo                   
+kernel-ml-headers.x86_64                             5.6.6-1.el7.elrepo                   
+kernel-ml-tools.x86_64                               5.6.6-1.el7.elrepo                   
+kernel-ml-tools-libs.x86_64                          5.6.6-1.el7.elrepo                   
+kernel-ml-tools-libs-devel.x86_64                    5.6.6-1.el7.elrepo                   
+perf.x86_64                                          5.6.6-1.el7.elrepo                   
+python-perf.x86_64                                   5.6.6-1.el7.elrepo                  
+</code></pre>
+<p>这里是0429安装的，所以显示的版本为上个版本，4.4.219-1、5.6.7-1。</p>
+<pre><code class="language-plain">[root@sdev075 ~]# yum --disablerepo=&quot;*&quot; --enablerepo=&quot;elrepo-kernel&quot; list available
+已加载插件：fastestmirror, langpacks
+Loading mirror speeds from cached hostfile
+ * elrepo-kernel: mirrors.tuna.tsinghua.edu.cn
+可安装的软件包
+kernel-lt.x86_64                            4.4.220-1.el7.elrepo            elrepo-kernel
+kernel-lt-devel.x86_64                      4.4.220-1.el7.elrepo            elrepo-kernel
+kernel-lt-doc.noarch                        4.4.220-1.el7.elrepo            elrepo-kernel
+kernel-lt-headers.x86_64                    4.4.220-1.el7.elrepo            elrepo-kernel
+kernel-lt-tools.x86_64                      4.4.220-1.el7.elrepo            elrepo-kernel
+kernel-lt-tools-libs.x86_64                 4.4.220-1.el7.elrepo            elrepo-kernel
+kernel-lt-tools-libs-devel.x86_64           4.4.220-1.el7.elrepo            elrepo-kernel
+kernel-ml-doc.noarch                        5.6.7-1.el7.elrepo              elrepo-kernel
+kernel-ml-headers.x86_64                    5.6.7-1.el7.elrepo              elrepo-kernel
+kernel-ml-tools.x86_64                      5.6.7-1.el7.elrepo              elrepo-kernel
+kernel-ml-tools-libs.x86_64                 5.6.7-1.el7.elrepo              elrepo-kernel
+kernel-ml-tools-libs-devel.x86_64           5.6.7-1.el7.elrepo              elrepo-kernel
+perf.x86_64                                 5.6.7-1.el7.elrepo              elrepo-kernel
+python-perf.x86_64                          5.6.7-1.el7.elrepo              elrepo-kernel
+</code></pre>
+<h3 id="载入elrepo-kernel元数据"><strong>载入elrepo-kernel元数据</strong></h3>
+<pre><code class="language-plain">yum --disablerepo=\* --enablerepo=elrepo-kernel repolist
+</code></pre>
+<figure data-type="image" tabindex="9"><img src="https://uploader.shimo.im/f/1fqejLVQwPIYfsSo.png!thumbnail" alt="图片" loading="lazy"></figure>
+<pre><code class="language-plain">[root@sdev075 bi]# yum --disablerepo=\* --enablerepo=elrepo-kernel repolist
+已加载插件：fastestmirror, langpacks
+Loading mirror speeds from cached hostfile
+ * elrepo-kernel: mirrors.tuna.tsinghua.edu.cn
+源标识                      源名称                                                                     状态
+!elrepo-kernel              ELRepo.org Community Enterprise Linux Kernel Repository - el7              37
+repolist: 37
+</code></pre>
+<h3 id="安装最新的主线稳定内核">安装最新的主线稳定内核</h3>
+<p>因为安装是0429进行的，所以就以0429的版本为准来介绍。</p>
+<p>上图可以看出，长期维护版本lt为4.4.220-1，最新主线稳定版ml为5.6.7-1，我们需要安装最新的主线稳定内核，使用如下命令：(以后这台机器升级内核直接运行这句就可升级为最新稳定版)</p>
+<blockquote>
+<p>lt  ：long term support，长期支持版本；<br>
+ml：mainline，主线版本；</p>
+<pre><code class="language-plain">yum -y --enablerepo=elrepo-kernel install kernel-ml.x86_64 kernel-ml-devel.x86_64 
+</code></pre>
+</blockquote>
+<pre><code>![图片](https://uploader.shimo.im/f/AfUWHrjnbzrpaaxn.png!thumbnail)
+
+​```   plain
+[root@sdev075 bi]# yum -y --enablerepo=elrepo-kernel install kernel-ml.x86_64 kernel-ml-devel.x86_64
+已加载插件：fastestmirror, langpacks
+Loading mirror speeds from cached hostfile
+ * base: mirrors.aliyun.com
+ * elrepo: mirrors.tuna.tsinghua.edu.cn
+ * elrepo-kernel: mirrors.tuna.tsinghua.edu.cn
+ * epel: mirrors.bfsu.edu.cn
+ * extras: mirrors.aliyun.com
+ * updates: mirrors.aliyun.com
+elrepo-kernel                                                                       | 2.9 kB  00:00:00     
+elrepo-kernel/primary_db                                                            | 1.9 MB  00:01:18     
+正在解决依赖关系
+--&gt; 正在检查事务
+---&gt; 软件包 kernel-ml.x86_64.0.5.6.7-1.el7.elrepo 将被 安装
+---&gt; 软件包 kernel-ml-devel.x86_64.0.5.6.7-1.el7.elrepo 将被 安装
+--&gt; 解决依赖关系完成
+
+依赖关系解决
+
+===========================================================================================================
+ Package                    架构              版本                          源                        大小
+===========================================================================================================
+正在安装:
+ kernel-ml                  x86_64            5.6.7-1.el7.elrepo            elrepo-kernel             49 M
+ kernel-ml-devel            x86_64            5.6.7-1.el7.elrepo            elrepo-kernel             13 M
+
+事务概要
+===========================================================================================================
+安装  2 软件包
+
+总下载量：62 M
+安装大小：272 M
+Downloading packages:
+(1/2): kernel-ml-devel-5.6.7-1.el7.elrepo.x86_64.rpm                                |  13 MB  00:06:21     
+(2/2): kernel-ml-5.6.7-1.el7.elrepo.x86_64.rpm                                      |  49 MB  00:08:09     
+-----------------------------------------------------------------------------------------------------------
+总计                                                                       130 kB/s |  62 MB  00:08:09     
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  正在安装    : kernel-ml-devel-5.6.7-1.el7.elrepo.x86_64                                              1/2 
+  正在安装    : kernel-ml-5.6.7-1.el7.elrepo.x86_64                                                    2/2 
+  验证中      : kernel-ml-5.6.7-1.el7.elrepo.x86_64                                                    1/2 
+  验证中      : kernel-ml-devel-5.6.7-1.el7.elrepo.x86_64                                              2/2 
+
+已安装:
+  kernel-ml.x86_64 0:5.6.7-1.el7.elrepo             kernel-ml-devel.x86_64 0:5.6.7-1.el7.elrepo            
+
+完毕！
+
+</code></pre>
+<h2 id="三-修改grub中默认的内核版本">三、修改grub中默认的内核版本</h2>
+<p>内核升级完毕后，目前内核还是默认的版本，如果此时直接执行reboot命令，重启后使用的内核版本还是默认的 3.10.0-957.10.1，不会使用新的5.6.7-1，首先，我们可以通过命令查看默认启动顺序：</p>
+<h3 id="查看默认启动顺序">查看默认启动顺序</h3>
+<pre><code class="language-plain">awk -F\' '$1==&quot;menuentry &quot; {print $2}' /etc/grub2.cfg
+</code></pre>
+<figure data-type="image" tabindex="10"><img src="https://uploader.shimo.im/f/MQuY8m3TVkgXASmQ.png!thumbnail" alt="图片" loading="lazy"></figure>
+<pre><code class="language-plain">[root@sdev075 bi]# awk -F\' '$1==&quot;menuentry &quot; {print $2}' /etc/grub2.cfg
+CentOS Linux (5.6.7-1.el7.elrepo.x86_64) 7 (Core)
+CentOS Linux (5.6.6-1.el7.elrepo.x86_64) 7 (Core)
+CentOS Linux (3.10.0-957.10.1.el7.x86_64) 7 (Core)
+CentOS Linux (0-rescue-74670a4acd6e406fb3f6663b671da034) 7 (Core)
+</code></pre>
+<h3 id="修改内核的启动顺序">修改内核的启动顺序</h3>
+<p>由上面可以看出新内核(5.6.7-1)目前位置在0，原来的内核(3.10.0-957.10.1)目前位置在2，所以如果想生效最新的内核，还需要我们修改内核的启动顺序为0。</p>
+<p>默认新内核是从头插入，默认启动顺序也是从0开始（当前顺序还未生效）</p>
+<p>使用Vim命令，修改grub配置</p>
+<pre><code class="language-plain">vim /etc/default/grub
+</code></pre>
+<figure data-type="image" tabindex="11"><img src="https://uploader.shimo.im/f/7Fu778KTBln8y0z0.png!thumbnail" alt="图片" loading="lazy"></figure>
+<figure data-type="image" tabindex="12"><img src="https://uploader.shimo.im/f/uKdCUd54FAcX6yxA.png!thumbnail" alt="图片" loading="lazy"></figure>
+<p>摁 i 进行插入</p>
+<figure data-type="image" tabindex="13"><img src="https://uploader.shimo.im/f/S35y7PnD7cTrh1dD.png!thumbnail" alt="图片" loading="lazy"></figure>
+<p>使用方向键进行移动光标</p>
+<figure data-type="image" tabindex="14"><img src="https://uploader.shimo.im/f/Zj3KszWM4AMZOaU3.png!thumbnail" alt="图片" loading="lazy"></figure>
+<p>把 saved 改为 0</p>
+<figure data-type="image" tabindex="15"><img src="https://uploader.shimo.im/f/4OPwGiJbIc51zgvj.png!thumbnail" alt="图片" loading="lazy"></figure>
+<p>摁下esc ,下方无插入，然后输入:wq，回车，即可保存退出。</p>
+<figure data-type="image" tabindex="16"><img src="https://uploader.shimo.im/f/F6tzB6l9QeIPf0VH.png!thumbnail" alt="图片" loading="lazy"></figure>
+<h3 id="重新创建内核配置">重新创建内核配置</h3>
+<p>运行grub2-mkconfig命令来重新创建内核配置</p>
+<pre><code class="language-plain">grub2-mkconfig -o /boot/grub2/grub.cfg
+</code></pre>
+<figure data-type="image" tabindex="17"><img src="https://uploader.shimo.im/f/8RQiXFKxX7HUqN8T.png!thumbnail" alt="图片" loading="lazy"></figure>
+<pre><code class="language-plain">[root@sdev075 bi]# grub2-mkconfig -o /boot/grub2/grub.cfg
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-5.6.7-1.el7.elrepo.x86_64
+Found initrd image: /boot/initramfs-5.6.7-1.el7.elrepo.x86_64.img
+Found linux image: /boot/vmlinuz-5.6.6-1.el7.elrepo.x86_64
+Found initrd image: /boot/initramfs-5.6.6-1.el7.elrepo.x86_64.img
+Found linux image: /boot/vmlinuz-3.10.0-957.10.1.el7.x86_64
+Found initrd image: /boot/initramfs-3.10.0-957.10.1.el7.x86_64.img
+Found linux image: /boot/vmlinuz-0-rescue-74670a4acd6e406fb3f6663b671da034
+Found initrd image: /boot/initramfs-0-rescue-74670a4acd6e406fb3f6663b671da034.img
+done
+
+</code></pre>
+<h2 id="四-重启系统并查看系统内核">四、重启系统并查看系统内核</h2>
+<h3 id="重启系统">重启系统</h3>
+<pre><code class="language-plain">[root@sdev075 bi]# reboot
+Connection closing...Socket close.
+Connection closed by foreign host.
+Disconnected from remote host(hdbi-bi) at 09:31:25.
+</code></pre>
+<h3 id="查看系统内核">查看系统内核</h3>
+<pre><code class="language-plain">[root@sdev075 ~]# uname -r
+5.6.7-1.el7.elrepo.x86_64
+</code></pre>
+<h2 id="五-删除老内核以及内核工具">五、删除老内核以及内核工具</h2>
+<p>rpm -qa表示查找软件包，grep表示过滤条件，经常用到此命令，先查找所有，然后用grep过滤</p>
+<p><a href="https://blog.csdn.net/u011939264/article/details/85320045">https://blog.csdn.net/u011939264/article/details/85320045</a></p>
+<h3 id="查看已安装的旧内核">查看已安装的旧内核</h3>
+<p>查看当前系统中所有已安装的旧内核（3.10）版本：</p>
+<pre><code class="language-plain">rpm -qa|grep kernel|grep 3.10
+</code></pre>
+<figure data-type="image" tabindex="18"><img src="https://uploader.shimo.im/f/Oyh44s5mjCMyG0HT.png!thumbnail" alt="图片" loading="lazy"></figure>
+<pre><code class="language-plain">[root@sdev075 ~]# rpm -qa|grep kernel|grep 3.10
+kernel-devel-3.10.0-957.5.1.el7.x86_64
+kernel-devel-3.10.0-957.10.1.el7.x86_64
+kernel-headers-3.10.0-957.10.1.el7.x86_64
+kernel-tools-3.10.0-957.10.1.el7.x86_64
+kernel-3.10.0-957.10.1.el7.x86_64
+kernel-tools-libs-3.10.0-957.10.1.el7.x86_64
+</code></pre>
+<h3 id="卸载已安装的旧内核">卸载已安装的旧内核</h3>
+<p>卸载当前系统中所有已安装的旧内核（3.10）版本</p>
+<pre><code class="language-plain">rpm -qa|grep kernel|grep 3.10|xargs yum remove -y
+</code></pre>
+<figure data-type="image" tabindex="19"><img src="https://uploader.shimo.im/f/Cd0zsuj074dcpL7D.png!thumbnail" alt="图片" loading="lazy"></figure>
+<figure data-type="image" tabindex="20"><img src="https://uploader.shimo.im/f/QqYaH1jX7W1UPhNy.png!thumbnail" alt="图片" loading="lazy"></figure>
+<h3 id="查看当前系统中所有已安装的内核版本">查看当前系统中所有已安装的内核版本</h3>
+<pre><code class="language-plain">rpm -qa | grep kernel
+</code></pre>
+<figure data-type="image" tabindex="21"><img src="https://uploader.shimo.im/f/Sea2nRfMX3F4auyl.png!thumbnail" alt="图片" loading="lazy"></figure>
+<pre><code class="language-plain">[root@sdev075 ~]# rpm -qa | grep kernel
+kernel-ml-5.6.7-1.el7.elrepo.x86_64
+kernel-ml-5.6.6-1.el7.elrepo.x86_64
+kernel-ml-devel-5.6.7-1.el7.elrepo.x86_64
+abrt-addon-kerneloops-2.1.11-52.el7.centos.x86_64
+</code></pre>
+<h3 id="查看当前系统中在用内核版本">查看当前系统中在用内核版本</h3>
+<pre><code class="language-plain">[root@sdev075 ~]# uname -r
+5.6.7-1.el7.elrepo.x86_64
+</code></pre>
+<h2 id="参考链接">参考链接</h2>
+<ol>
+<li>升级Centos 7/6内核版本到4.12.4的方法   <a href="https://www.centos.bz/2017/08/upgrade-centos-7-6-kernel-to-4-12-4/">https://www.centos.bz/2017/08/upgrade-centos-7-6-kernel-to-4-12-4/</a></li>
+<li>CentOS 7 删除无用的旧内核    <a href="https://www.yanning.wang/archives/678.html">https://www.yanning.wang/archives/678.html</a></li>
+<li>centos7升级内核至最新  <a href="https://www.cnblogs.com/ding2016/p/10429640.html">https://www.cnblogs.com/ding2016/p/10429640.html</a></li>
+<li>Centos7.x 操作系统升级内核   <a href="https://blog.csdn.net/xiegh2014/article/details/96192233">https://blog.csdn.net/xiegh2014/article/details/96192233</a></li>
+</ol>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E4%B8%80-%E6%9F%A5%E7%9C%8B%E7%B3%BB%E7%BB%9F%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC">一、查看系统内核版本</a>
+<ul>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E5%8F%91%E8%A1%8C%E7%89%88%E6%9C%AC">查看发行版本</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC">查看内核版本</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8">二、升级内核</a>
+<ul>
+<li><a href="#%E5%AF%BC%E5%85%A5elrepo%E7%9A%84key">导入elrepo的key</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85elrepo%E7%9A%84yum%E6%BA%90">安装elrepo的yum源</a>
+<ul>
+<li><a href="#%E5%88%87%E6%8D%A2%E4%B8%BA-root-%E7%94%A8%E6%88%B7">切换为 root 用户</a></li>
+<li><a href="#%E5%86%8D%E6%AC%A1%E5%AF%BC%E5%85%A5%E5%8F%8A%E5%AE%89%E8%A3%85elrepo%E7%9A%84yum%E6%BA%90">再次导入及安装elrepo的yum源</a></li>
+</ul>
+</li>
+<li><a href="#%E5%88%97%E5%87%BA%E5%8F%AF%E5%AE%89%E8%A3%85%E7%9A%84%E8%BD%AF%E4%BB%B6%E5%8C%85">列出可安装的软件包</a></li>
+<li><a href="#%E8%BD%BD%E5%85%A5elrepo-kernel%E5%85%83%E6%95%B0%E6%8D%AE"><strong>载入elrepo-kernel元数据</strong></a></li>
+<li><a href="#%E5%AE%89%E8%A3%85%E6%9C%80%E6%96%B0%E7%9A%84%E4%B8%BB%E7%BA%BF%E7%A8%B3%E5%AE%9A%E5%86%85%E6%A0%B8">安装最新的主线稳定内核</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89-%E4%BF%AE%E6%94%B9grub%E4%B8%AD%E9%BB%98%E8%AE%A4%E7%9A%84%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC">三、修改grub中默认的内核版本</a>
+<ul>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E9%BB%98%E8%AE%A4%E5%90%AF%E5%8A%A8%E9%A1%BA%E5%BA%8F">查看默认启动顺序</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E5%86%85%E6%A0%B8%E7%9A%84%E5%90%AF%E5%8A%A8%E9%A1%BA%E5%BA%8F">修改内核的启动顺序</a></li>
+<li><a href="#%E9%87%8D%E6%96%B0%E5%88%9B%E5%BB%BA%E5%86%85%E6%A0%B8%E9%85%8D%E7%BD%AE">重新创建内核配置</a></li>
+</ul>
+</li>
+<li><a href="#%E5%9B%9B-%E9%87%8D%E5%90%AF%E7%B3%BB%E7%BB%9F%E5%B9%B6%E6%9F%A5%E7%9C%8B%E7%B3%BB%E7%BB%9F%E5%86%85%E6%A0%B8">四、重启系统并查看系统内核</a>
+<ul>
+<li><a href="#%E9%87%8D%E5%90%AF%E7%B3%BB%E7%BB%9F">重启系统</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E7%B3%BB%E7%BB%9F%E5%86%85%E6%A0%B8">查看系统内核</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%94-%E5%88%A0%E9%99%A4%E8%80%81%E5%86%85%E6%A0%B8%E4%BB%A5%E5%8F%8A%E5%86%85%E6%A0%B8%E5%B7%A5%E5%85%B7">五、删除老内核以及内核工具</a>
+<ul>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E5%B7%B2%E5%AE%89%E8%A3%85%E7%9A%84%E6%97%A7%E5%86%85%E6%A0%B8">查看已安装的旧内核</a></li>
+<li><a href="#%E5%8D%B8%E8%BD%BD%E5%B7%B2%E5%AE%89%E8%A3%85%E7%9A%84%E6%97%A7%E5%86%85%E6%A0%B8">卸载已安装的旧内核</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E7%B3%BB%E7%BB%9F%E4%B8%AD%E6%89%80%E6%9C%89%E5%B7%B2%E5%AE%89%E8%A3%85%E7%9A%84%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC">查看当前系统中所有已安装的内核版本</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E7%B3%BB%E7%BB%9F%E4%B8%AD%E5%9C%A8%E7%94%A8%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC">查看当前系统中在用内核版本</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5">参考链接</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://enriquejaja.github.io/post/hello-gridea/">
+              <h3 class="post-title">
+                Hello Gridea
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+
+          
+            <link rel="stylesheet" href="https://unpkg.com/disqusjs@1.1/dist/disqusjs.css">
+<script src="https://unpkg.com/disqusjs@1.1/dist/disqus.js"></script>
+
+<div id="disqus_thread"></div>
+
+<script>
+
+var options = {
+  shortname: '',
+  apikey: '',
+}
+if ('') {
+  options.api = ''
+}
+var dsqjs = new DisqusJS(options)
+
+</script>
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | 
+  <a class="rss" href="https://enriquejaja.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
